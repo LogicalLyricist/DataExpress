@@ -1,0 +1,40 @@
+doctype 
+html 
+    head 
+    body 
+        form(method='post' action='/create')
+            p Username:
+                br
+                input(type='text' name='username')
+            p Password: 
+                br
+                input(type='text' name='password')
+            p Email: 
+                br 
+                input(type='text' name='email')
+            p Age: 
+                br
+                input(type='text' name='age')
+            br
+            label(for='question1') What is your favorite pizza topping: 
+            select(name='question1')
+                option(value='Cheese') Cheese
+                option(value='Pepperoni') Pepperoni
+                option(value='Pineapple') Pineapple
+                option(value='Other') Other
+            br
+            label(for='question2') What is your dream superpower: 
+            select(name='question2')
+                option(value='Flying') Flying
+                option(value='Teleportation') Teleportation
+                option(value='Invisibility') Invisibility
+                option(value='Strength') Super strength
+            br
+            label(for='question3') What is your favorite movie genre: 
+            select(name='question3')
+                option(value='Action') Action
+                option(value='Comedy') Comedy
+                option(value='Drama') Drama
+                option(value='Horror') Horror              
+            p 
+                input(type='submit' value='Create account')
