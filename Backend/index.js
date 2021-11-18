@@ -3,6 +3,10 @@ const pug = require('pug');
 const expressSession = require('express-session');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
+const { MongoClient, ObjectId } = require('mongodb');
+
+const url = '';
+const client = new MongoClient(url);
 
 const app = express();
 
