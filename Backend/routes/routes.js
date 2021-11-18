@@ -11,20 +11,31 @@ exports.loginPage = (req, res) => {
     res.render('login');
 };
 
-exports.login = (req, res) => {
-    console.log(req.body.username);
-    if(req.body.username != null && req.body.password != null){
+exports.login = async (req, res) => {
+    let username = req.body.username;
+    let password = req.body.password;
+    await client.connect();
+    const findResult = await collection.find({username});
+
+    if(findResult != null && findResult.password == password){
         req.session.user = {
             isAuthenticated: true,
             username: req.body.username
         }
+        res.redirect('/home');
     }else {
-        res.redirect('/');
+        res.redirect('/start');
     }
+    console.log('Found documents => ', findResult);
+    client.close();
 };
 
-exports.index = (req, res) => {
-    res.render('index');
+exports.home = (req, res) => {
+
+};
+
+exports.start = (req, res) => {
+    res.render('start');
 };
 
 exports.createPage = (req, res) => {
@@ -44,5 +55,5 @@ exports.create = async (req, res) => {
     };
     const insertResult = await collection.insertOne(user);
     client.close();
-    res.redirect('/');
+    res.redirect('/start');
 };
