@@ -2,7 +2,7 @@ doctype
 html 
     head 
     body 
-        form(method='post' action='/')
+        form(method='post', action='/loggedIn')
             p Username:
                 br
                 input(type='text' name='username')
@@ -11,3 +11,6 @@ html
                 input(type='text' name='password')
             p 
                 input(type='submit' value='Login')
+        form(method='get', action='/index')
+            p  
+                input(type='submit' value='Home')

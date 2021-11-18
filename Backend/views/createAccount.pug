@@ -2,7 +2,7 @@ doctype
 html 
     head 
     body 
-        form(method='post' action='/create')
+        form(method='post', action='/createAcc')
             p Username:
                 br
                 input(type='text' name='username')
@@ -38,3 +38,5 @@ html
                 option(value='Horror') Horror              
             p 
                 input(type='submit' value='Create account')
+        form(method='get', action='/index')
+            input(type='submit', value='Home')

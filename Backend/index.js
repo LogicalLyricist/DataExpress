@@ -21,20 +21,14 @@ app.use(expressSession({
     resave: true
 }));
 
-app.get('/', (req, res) => {
-    res.render('index');
-});
+app.get('/', routes.index);
+app.get('/index', routes.index);
+app.post('/login', routes.loginPage);
+app.post('/loggedIn', routes.login);
+//app.post('/login', urlencodedParser, routes.login);
+app.post('/create', routes.createPage);
+//app.get('/create', urlencodedParser, routes.create);
+app.post('/createAcc', routes.create);
 
-app.post('/login', urlencodedParser, (req, res) => {
-    console.log(req.body.username);
-    if(req.body.username != null && req.body.password != null){
-        req.session.user = {
-            isAuthenticated: true,
-            username: req.body.username
-        }
-    }else {
-        res.redirect('/');
-    }
-});
 
 app.listen(3000);
