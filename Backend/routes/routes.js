@@ -17,21 +17,28 @@ exports.login = async (req, res) => {
     await client.connect();
     const findResult = await collection.find({username});
 
-    if(findResult != null && findResult.password == password){
+    bcrypt.compare(password, findResult.password, (err, res) => {
         req.session.user = {
             isAuthenticated: true,
             username: req.body.username
         }
         res.redirect('/home');
-    }else {
-        res.redirect('/start');
-    }
+    });
     console.log('Found documents => ', findResult);
     client.close();
 };
 
-exports.home = (req, res) => {
-
+exports.home = async (req, res) => {
+    let user = req.session.user;
+    await client.connect();
+    const findResult = await collection.find({user}).toArray();
+    console.log('Found documents => ', findResult);
+    client.close();
+    
+    res.render('home', {
+        title: 'User List',
+        users: findResult
+    });
 };
 
 exports.start = (req, res) => {
@@ -44,9 +51,10 @@ exports.createPage = (req, res) => {
 
 exports.create = async (req, res) => {
     await client.connect();
+    let salt = bcrypt.genSaltSync(10);
     let user = {
         username: req.body.username,
-        pass: req.body.password,
+        pass: bcrypt.hashSync(req.body.password, salt),
         email: req.body.email,
         age: req.body.age,
         q1: req.body.question1,

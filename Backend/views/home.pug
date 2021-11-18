@@ -1,0 +1,28 @@
+extends layout 
+
+block content 
+    table(class='gridtable')
+        tr 
+            th Username
+            th Password
+            th Email
+            th Age 
+            th Favorite pizza topping 
+            th Desired superpower 
+            th Favorite movie genre 
+            th 
+            th
+        each item in users
+            tr
+                td #{item.username} 
+                td #{item.pass}
+                td #{item.email} 
+                td #{item.age} 
+                td #{item.q1} 
+                td #{item.q2} 
+                td #{item.q3} 
+                td
+                    a(href='/edit') Edit 
+    form(method='post', action='/start')
+        p 
+            input(type='submit', value='Home')
