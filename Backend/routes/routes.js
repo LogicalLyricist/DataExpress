@@ -3,7 +3,7 @@ const { hasUncaughtExceptionCaptureCallback } = require('process');
 const url = 'mongodb+srv://group:MTM282@dataexpressdb.108zd.mongodb.net/DataExpress?retryWrites=true&w=majority';
 const client = new MongoClient(url);
 
-const dbName = 'myData';
+const dbName = 'DataExpress';
 const db = client.db(dbName);
 const collection = db.collection('Users');
 
