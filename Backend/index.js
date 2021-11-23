@@ -15,13 +15,14 @@ const urlencodedParser = express.urlencoded({
     extended: false
 });
 
-const checkAuth = (req, res, next) => {
+/*const checkAuth = (req, res, next) => {
+    console.log(req.session.user + req.session.user.isAuthenticated)
     if(req.session.user && req.session.user.isAuthenticated){
         next();
     }else{
         res.redirect('/');
     }
-}
+}*/
 
 app.use(expressSession({
     secret: 'whatever',
@@ -31,11 +32,11 @@ app.use(expressSession({
 
 app.get('/', routes.start);
 app.get('/start', routes.start);
-app.post('/login', routes.loginPage);
-app.post('/loggedIn', routes.login);
+app.post('/login', urlencodedParser, routes.loginPage);
+//app.post('/loggedIn', routes.login);
 app.post('/loggedIn', urlencodedParser, routes.login);
-app.post('/create', routes.createPage);
-app.post('/createAcc', routes.create);
+app.get('/create', routes.createPage);
+app.post('/createAcc', urlencodedParser, routes.create);
 app.get('/createAcc', urlencodedParser, routes.create);
 app.get('/home', checkAuth, routes.home);
 

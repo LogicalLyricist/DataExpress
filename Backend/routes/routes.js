@@ -1,20 +1,32 @@
 const { MongoClient, ObjectId } = require('mongodb');
 const { hasUncaughtExceptionCaptureCallback } = require('process');
-const url = 'mongodb+srv://group:MTM282@dataexpressdb.108zd.mongodb.net/DataExpress?retryWrites=true&w=majority';
+const url = 'mongodb+srv://Group:MTM282@dataexpressdb.108zd.mongodb.net/DataExpress?retryWrites=true&w=majority';
 const client = new MongoClient(url);
 
 const dbName = 'DataExpress';
 const db = client.db(dbName);
 const collection = db.collection('Users');
+const bcrypt = require('bcryptjs');
+
+const checkAuth = (req, res, next) => {
+    console.log(req.body.username);
+    if(req.body.username == "user" && req.body.password == "pass"){
+            req.session.user = {
+                isAuthenticated: true,
+                username: req.body.username
+            }
+            res.redirect("/private");
+    }
+}
 
 exports.loginPage = (req, res) => {
     res.render('login');
 };
 
 exports.login = async (req, res) => {
+    await client.connect();
     let username = req.body.username;
     let password = req.body.password;
-    await client.connect();
     const findResult = await collection.find({username});
 
     bcrypt.compare(password, findResult.password, (err, res) => {
@@ -22,15 +34,15 @@ exports.login = async (req, res) => {
             isAuthenticated: true,
             username: req.body.username
         }
-        res.redirect('/home');
     });
     console.log('Found documents => ', findResult);
     client.close();
+    res.redirect('/home');
 };
 
 exports.home = async (req, res) => {
-    let user = req.session.user;
     await client.connect();
+    let user = req.session.user;
     const findResult = await collection.find({user}).toArray();
     console.log('Found documents => ', findResult);
     client.close();
@@ -61,6 +73,12 @@ exports.create = async (req, res) => {
         q2: req.body.question2,
         q3: req.body.question3
     };
+    console.log(user +":" + req.body.username);
+        /*req.session.user = {
+            isAuthenticated: true,
+            username: req.body.username
+        }*/
+        console.log("Thank god")
     const insertResult = await collection.insertOne(user);
     client.close();
     res.redirect('/start');
