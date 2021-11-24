@@ -8,7 +8,7 @@ const db = client.db(dbName);
 const collection = db.collection('Users');
 const bcrypt = require('bcryptjs');
 
-const checkAuth = (req, res, next) => {
+exports.checkAuth = (req, res, next) => {
     console.log(req.body.username);
     if(req.body.username == "user" && req.body.password == "pass"){
             req.session.user = {
@@ -30,10 +30,14 @@ exports.login = async (req, res) => {
     const findResult = await collection.find({username});
 
     bcrypt.compare(password, findResult.password, (err, res) => {
-        req.session.user = {
-            isAuthenticated: true,
-            username: req.body.username
-        }
+        if(err){
+            console.log(err)
+        }else{
+            req.session.user = {
+                isAuthenticated: true,
+                username: req.body.username
+            }
+        }''
     });
     console.log('Found documents => ', findResult);
     client.close();
@@ -41,16 +45,21 @@ exports.login = async (req, res) => {
 };
 
 exports.home = async (req, res) => {
-    await client.connect();
-    let user = req.session.user;
-    const findResult = await collection.find({user}).toArray();
-    console.log('Found documents => ', findResult);
-    client.close();
-    
-    res.render('home', {
-        title: 'User List',
-        users: findResult
-    });
+    console.log(req.session.user + req.session.user.isAuthenticated)
+    if(req.session.user && req.session.user.isAuthenticated){
+        await client.connect();
+        let user = req.session.user;
+        const findResult = await collection.find({user}).toArray();
+        console.log('Found documents => ', findResult);
+        client.close();
+        
+        res.render('home', {
+            title: 'User List',
+            users: findResult
+        });
+    }else{
+        res.redirect('/');
+    }
 };
 
 exports.start = (req, res) => {
@@ -74,11 +83,10 @@ exports.create = async (req, res) => {
         q3: req.body.question3
     };
     console.log(user +":" + req.body.username);
-        /*req.session.user = {
+        req.session.user = {
             isAuthenticated: true,
             username: req.body.username
-        }*/
-        console.log("Thank god")
+        }
     const insertResult = await collection.insertOne(user);
     client.close();
     res.redirect('/start');

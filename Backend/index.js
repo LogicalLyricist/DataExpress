@@ -38,6 +38,6 @@ app.post('/loggedIn', urlencodedParser, routes.login);
 app.get('/create', routes.createPage);
 app.post('/createAcc', urlencodedParser, routes.create);
 app.get('/createAcc', urlencodedParser, routes.create);
-app.get('/home', checkAuth, routes.home);
+app.get('/home', routes.home);
 
 app.listen(3000);
