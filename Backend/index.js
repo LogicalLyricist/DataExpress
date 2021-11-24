@@ -29,7 +29,7 @@ login = async (req, res) => {
     let password = req.body.password;
     const findResult = await collection.find({username});
 
-    bcrypt.compare(password, findResult.password, (err, res) => {
+    bcrypt.compareSync(password, findResult.pass, (err, res) => {
         if(err){
             console.log(err)
         }else{
@@ -39,13 +39,9 @@ login = async (req, res) => {
             }
         }''
     });
-    console.log('Found documents => ', findResult);
-    client.close();
-    res.redirect('/home');
-};
 
-home = async (req, res) => {
-    console.log(req.session.user + req.session.user.isAuthenticated)
+    console.log('Found documents => ', findResult);
+    //console.log(req.session.user + req.session.user.isAuthenticated)
     if(req.session.user && req.session.user.isAuthenticated){
         await client.connect();
         let user = req.session.user;
@@ -58,8 +54,12 @@ home = async (req, res) => {
             users: findResult
         });
     }else{
+        client.close
         res.redirect('/');
     }
+};
+
+home = async (req, res) => {
 };
 
 start = (req, res) => {
@@ -112,5 +112,5 @@ app.get('/create', createPage);
 app.post('/createAcc', urlencodedParser, create);
 app.get('/createAcc', urlencodedParser, create);
 app.get('/home', home);
-
+app.post('/home',urlencodedParser, home);
 app.listen(3000);
