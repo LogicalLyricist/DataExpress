@@ -28,16 +28,16 @@ login = async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
     const findResult = await collection.find({username});
-
+    console.log("USER: ---------------" + findResult.toString())
     bcrypt.compareSync(password, findResult.pass, (err, res) => {
         if(err){
-            console.log(err)
+            //console.log(err)
         }else{
             req.session.user = {
                 isAuthenticated: true,
                 username: req.body.username
             }
-        }''
+        }
     });
 
     console.log('Found documents => ', findResult);
