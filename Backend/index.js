@@ -19,17 +19,18 @@ const dbName = 'DataExpress';
 const db = client.db(dbName);
 const collection = db.collection('Users');
 
-loginPage = (req, res) => {
+renderLogin = (req, res) => {
     res.render('login');
 };
 
-login = async (req, res) => {
+authUser = async (req, res) => {
     await client.connect();
     let username = req.body.username;
     let password = req.body.password;
-    const findResult = await collection.find({username});
-    console.log("USER: ---------------" + findResult.toString())
-    bcrypt.compareSync(password, findResult.pass, (err, res) => {
+    
+    const findResult = await collection.find({username:{username}}).toArray();
+    console.log("USER: ---------------" + findResult[0])
+    bcrypt.compareSync(password, findResult[0].pass, (err, res) => {
         if(err){
             //console.log(err)
         }else{
@@ -41,15 +42,13 @@ login = async (req, res) => {
     });
 
     console.log('Found documents => ', findResult);
-    //console.log(req.session.user + req.session.user.isAuthenticated)
     if(req.session.user && req.session.user.isAuthenticated){
-        await client.connect();
         let user = req.session.user;
         const findResult = await collection.find({user}).toArray();
         console.log('Found documents => ', findResult);
         client.close();
         
-        res.render('home', {
+        res.render('renderHome', {
             title: 'User List',
             users: findResult
         });
@@ -59,18 +58,19 @@ login = async (req, res) => {
     }
 };
 
-home = async (req, res) => {
+renderHome = (req, res) => {
+    res.render("home")
 };
 
 start = (req, res) => {
     res.render('start');
 };
 
-createPage = (req, res) => {
+renderCreate = (req, res) => {
     res.render('createAccount');
 };
 
-create = async (req, res) => {
+addUser = async (req, res) => {
     await client.connect();
     let salt = bcrypt.genSaltSync(10);
     let user = {
@@ -103,14 +103,13 @@ app.use(expressSession({
     resave: true
 }));
 
-app.get('/', start);
+app.get('/', renderHome); //Ask about later
 app.get('/start', start);
-app.post('/login', urlencodedParser, loginPage);
-//app.post('/loggedIn', routes.login);
-app.post('/loggedIn', urlencodedParser, login);
-app.get('/create', createPage);
-app.post('/createAcc', urlencodedParser, create);
-app.get('/createAcc', urlencodedParser, create);
-app.get('/home', home);
-app.post('/home',urlencodedParser, home);
+app.get('/login', renderLogin);
+app.post('/loggedIn', urlencodedParser, authUser);
+app.get('/create', renderCreate);
+app.post('/createAcc', urlencodedParser, addUser);
+app.get('/createAcc', urlencodedParser, addUser);
+app.get('/home', renderHome);
+app.post('/home',urlencodedParser, renderHome);
 app.listen(3000);
