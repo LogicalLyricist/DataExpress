@@ -40,20 +40,21 @@ authUser = async (req, res) => {
     });
 
     console.log('Found documents => ', findResult);
-    if(req.session.user && req.session.user.isAuthenticated){
+   // if(req.session.user && req.session.user.isAuthenticated){
         let user = req.session.user;
-        const findResult = await collection.find({user}).toArray();
         console.log('Found documents => ', findResult);
         client.close();
         
         res.render('home', {
             title: 'User List',
             users: findResult
+
+
         });
-    }else{
-        client.close
-        res.redirect('/');
-    }
+//     }else{
+//         client.close
+//         res.redirect('/');
+//     }
 };
 
 renderHome = (req, res) => {
