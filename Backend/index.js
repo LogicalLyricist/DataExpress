@@ -27,6 +27,7 @@ authUser = async (req, res) => {
     await client.connect();
     let username = req.body.username;
     let password = req.body.password;
+    console.log(username + password)
     
     const findResult = await collection.find({username:{username}}).toArray();
     console.log("USER: ---------------" + findResult[0])
@@ -103,7 +104,7 @@ app.use(expressSession({
     resave: true
 }));
 
-app.get('/', renderHome); //Ask about later
+app.get('/', start); //Ask about later
 app.get('/start', start);
 app.get('/login', renderLogin);
 app.post('/loggedIn', urlencodedParser, authUser);
