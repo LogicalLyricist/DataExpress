@@ -31,36 +31,34 @@ authUser = async (req, res) => {
     
     const findResult = await collection.find({username: username}).toArray();
     console.log("USER: ---------------" + findResult[0])
-    bcrypt.compareSync(password, findResult[0].pass, (err, res) => {
-    
-            req.session.user = {
-                isAuthenticated: true,
-                username: req.body.username
-        }
-    });
 
-    console.log('Found documents => ', findResult);
-   // if(req.session.user && req.session.user.isAuthenticated){
+    const passCheck = bcrypt.compareSync(password, findResult[0].pass)
+    if(passCheck){
+        req.session.user = {
+            isAuthenticated: true,
+            accountName: req.body.username
+        }
+        console.log('Found documents => ', findResult);
         let user = req.session.user;
         console.log('Found documents => ', findResult);
         client.close();
         
-        res.render('home', {
+        res.render('home',{
             title: 'User List',
-            users: findResult
-
-
-        });
-//     }else{
-//         client.close
-//         res.redirect('/');
-//     }
-};
+            users: findResult});
+    }else{
+        res.redirect("/fail")
+    }
+}
 
 renderHome = (req, res) => {
     res.render("home")
 };
 
+logout = (req,res) => {
+    req.session.destroy()
+    res.redirect("/")
+}
 start = (req, res) => {
     res.render('start');
 };
@@ -79,17 +77,52 @@ addUser = async (req, res) => {
         age: req.body.age,
         q1: req.body.question1,
         q2: req.body.question2,
-        q3: req.body.question3
+        q3: req.body.question3,
+        isAdmin: false
     };
     console.log(user +":" + req.body.username);
         req.session.user = {
             isAuthenticated: true,
-            username: req.body.username
+            accountName: req.body.username
         }
     const insertResult = await collection.insertOne(user);
     client.close();
     res.redirect('/start');
 };
+
+renderEdit = (req, res) => {
+    res.render('edit');
+};
+
+passFailed = (req, res) => {
+    res.render("fail");
+}
+
+editUser = async (req, res) => {
+    await client.connect();
+    let salt = bcrypt.genSaltSync(10);
+    let user = {
+        username: req.body.username,
+        pass: bcrypt.hashSync(req.body.password, salt),
+        email: req.body.email,
+        age: req.body.age,
+        q1: req.body.question1,
+        q2: req.body.question2,
+        q3: req.body.question3,
+        isAdmin: false
+    };
+    const editResult = await collection.updateOne({
+        "username": req.session.user.accountName}
+        , user);
+    console.log(user +" : " + req.body.username);
+        req.session.user = {
+            isAuthenticated: true,
+            accountName: req.body.username
+        }
+    
+    client.close();
+    res.redirect('/start');
+}
 
 const urlencodedParser = express.urlencoded({
     extended: false
@@ -103,12 +136,23 @@ app.use(expressSession({
 }));
 
 app.get('/', start); //Ask about later
+app.post("/", logout)
 app.get('/start', start);
+
 app.get('/login', renderLogin);
 app.post('/loggedIn', urlencodedParser, authUser);
+
 app.get('/create', renderCreate);
-app.post('/createAcc', urlencodedParser, addUser);
-app.get('/createAcc', urlencodedParser, addUser);
+app.post('/create', urlencodedParser, addUser);
+//app.get('/createAcc', urlencodedParser, addUser);
+
+//v one of these needs to go v
 app.get('/home', renderHome);
-app.post('/home',urlencodedParser, renderHome);
+app.post('/home',urlencodedParser, authUser);
+
+app.get('/edit', renderEdit);
+app.post('/edit', urlencodedParser, editUser);
+
+app.get('/fail', passFailed);
+
 app.listen(3000);
