@@ -1,12 +1,15 @@
-#gridtable{
-    border: 1px black;
+.gridtable{
+    border: 5px solid black;
+
+} 
+.gridtable tr td{
+
+text-align: center;
+
 }
-/* 
-#gridtable th{
-    margin:15px;
-} */
-#gridtable tr{
+.gridtable tr th{
+    border: 4px solid black;
     margin: 15px;
-    padding:15px;
-    align:center;
+    padding: 15px;
+
 }
