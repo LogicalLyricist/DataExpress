@@ -111,8 +111,9 @@ editUser = async (req, res) => {
         q3: req.body.question3,
         isAdmin: false
     };
-    const editResult = await collection.updateOne({
-        "username": req.session.user.accountName}
+    console.log(user)
+    const editResult = await collection.replaceOne(
+        {"username": req.session.user.accountName}
         , user);
     console.log(user +" : " + req.body.username);
         req.session.user = {
