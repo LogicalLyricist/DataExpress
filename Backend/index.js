@@ -10,6 +10,9 @@ app.set('view engine', 'pug');
 app.set('views', __dirname + '/views');
 app.use(cookieParser('whatever'));
 
+app.use(express.static(path.join(__dirname,'/public')));
+
+
 const { MongoClient, ObjectId } = require('mongodb');
 const { hasUncaughtExceptionCaptureCallback } = require('process');
 const url = 'mongodb+srv://Group:MTM282@dataexpressdb.108zd.mongodb.net/DataExpress?retryWrites=true&w=majority';
