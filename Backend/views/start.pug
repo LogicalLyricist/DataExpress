@@ -1,7 +1,6 @@
-doctype html
-html(lang="en")
-    head
-    body
+extends layout 
+
+block content
         form(method='get', action='/login')
             p 
                 input(type='submit' value='Login')
