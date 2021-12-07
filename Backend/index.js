@@ -39,8 +39,8 @@ authUser = async (req, res) => {
             accountName: req.body.username
         }
         console.log('Found documents => ', findResult);
-        let user = req.session.user;
-        console.log('Found documents => ', findResult);
+
+       // console.log('Found documents => ', findResult);
         client.close();
         
         res.render('home',{
@@ -51,8 +51,17 @@ authUser = async (req, res) => {
     }
 }
 
-renderHome = (req, res) => {
-    res.render("home")
+renderHome = async (req, res) => {
+    await client.connect();
+    let user = req.session.user;
+    console.log('account name ' + user.accountName);
+
+    const findResult = await collection.find({username: user.accountName}).toArray();
+    console.log('Found documents => ', findResult);
+    
+    res.render('home',{
+        title: 'User List',
+        users: findResult});
 };
 
 logout = (req,res) => {
@@ -122,7 +131,7 @@ editUser = async (req, res) => {
         }
     
     client.close();
-    res.redirect('/start');
+    res.redirect('/home');
 }
 
 const urlencodedParser = express.urlencoded({
