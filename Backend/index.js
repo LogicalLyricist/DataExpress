@@ -47,7 +47,6 @@ authUser = async (req, res) => {
 
        // console.log('Found documents => ', findResult);
         client.close();
-        
         res.redirect("/home")
     }else{
         res.redirect("/fail")
@@ -74,6 +73,16 @@ renderHome = async (req, res) => {
     }
 
     res.render('home',{
+        title: 'User List',
+        users: findResult});
+};
+
+renderAdmin = async (req, res) => {
+    await client.connect();
+    const findResult = await collection.find({}).toArray();
+    client.close();
+
+    res.render('admin',{
         title: 'User List',
         users: findResult});
 };
@@ -171,6 +180,13 @@ editUser = async (req, res) => {
     res.redirect('/home');
 }
 
+deleteUser = async (req, res) =>{
+    await client.connect();
+    const deleteResult = await collection.deleteOne({_id: ObjectId(req.params.id)});
+    client.close
+    res.redirect('/admin')
+
+};
 const urlencodedParser = express.urlencoded({
     extended: false
 });
@@ -199,6 +215,8 @@ app.post('/home',urlencodedParser, authUser);
 
 app.get('/edit', renderEdit);
 app.post('/edit', urlencodedParser, editUser);
+app.get('/admin', renderAdmin);
+app.get('/delete/:id', deleteUser);
 
 app.get('/fail', passFailed);
 

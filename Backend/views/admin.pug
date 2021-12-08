@@ -1,0 +1,25 @@
+extends layout 
+
+block content 
+    table(class='gridtable')
+        tr 
+            th Username
+            th Email
+            th Age 
+            th Favorite pizza topping 
+            th Desired superpower 
+            th Favorite movie genre 
+            th delete
+        each item in users
+            tr
+                td #{item.username} 
+                td #{item.email} 
+                td #{item.age} 
+                td #{item.q1} 
+                td #{item.q2} 
+                td #{item.q3} 
+                td
+                    a(href='delete/' + item._id) Delete
+    form(method='post', action='/')
+        p 
+            input(type='submit', value='Logout')
