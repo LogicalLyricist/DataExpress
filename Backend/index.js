@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const path = require('path')
 const app = express();
+const fs = require('fs');
 
 app.set('view engine', 'pug');
 app.set('views', __dirname + '/views');
@@ -12,6 +13,7 @@ app.use(cookieParser('whatever'));
 
 const { MongoClient, ObjectId } = require('mongodb');
 const { hasUncaughtExceptionCaptureCallback } = require('process');
+const { fstat } = require('fs');
 const url = 'mongodb+srv://Group:MTM282@dataexpressdb.108zd.mongodb.net/DataExpress?retryWrites=true&w=majority';
 const client = new MongoClient(url);
 
@@ -60,12 +62,35 @@ logout = (req,res) => {
     res.redirect("/")
 }
 start = (req, res) => {
+    updateToJSON()
     res.render('start');
 };
 
 renderCreate = (req, res) => {
     res.render('createAccount');
 };
+
+updateToJSON = async (req, res) => {
+    await client.connect();
+    const findResult = await collection.find({}).toArray();
+    var finalOutput
+
+    for(var i = 0; i < findResult.length; i++ ) {
+        q1 = findResult[i].q1
+        q2 = findResult[i].q2
+        q3 = findResult[i].q3
+        console.log(q1 + q2 + q3)
+        
+        finalOutput += (q1 + q2 +q3)
+        console.log(finalOutput)
+    }
+    finalOutput = JSON.stringify(finalOutput)
+
+    fs.writeFile("results.json", finalOutput, (err, result) => {
+        if(err) console.log('error: ', err);
+    });
+    client.close()
+}
 
 addUser = async (req, res) => {
     await client.connect();
