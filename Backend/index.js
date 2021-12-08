@@ -60,6 +60,7 @@ renderHome = async (req, res) => {
     console.log('account name ' + user.accountName);
 
     const findResult = await collection.find({username: user.accountName}).toArray();
+    client.close();
     console.log('Found documents => ', findResult);
     
     visited++;
