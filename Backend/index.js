@@ -48,9 +48,7 @@ authUser = async (req, res) => {
        // console.log('Found documents => ', findResult);
         client.close();
         
-        res.render('home',{
-            title: 'User List',
-            users: findResult});
+        res.redirect("/home")
     }else{
         res.redirect("/fail")
     }
@@ -62,8 +60,19 @@ renderHome = async (req, res) => {
     console.log('account name ' + user.accountName);
 
     const findResult = await collection.find({username: user.accountName}).toArray();
+    client.close();
     console.log('Found documents => ', findResult);
     
+    visited++;
+    res.cookie('stuff', user.accountName, {maxAge: 999999999999999999999999999999});
+    res.cookie('visited', visited, {maxAge: 999999999999999999999999999999});
+    
+    if (!(req.cookies.beenHereBefore == 'yes')){
+    
+        res.cookie('beenHereBefore', 'yes', {maxAge: 999999999999999999999999999999});
+        visited = 0;
+    }
+
     res.render('home',{
         title: 'User List',
         users: findResult});
@@ -75,18 +84,6 @@ logout = (req,res) => {
 }
 start = (req, res) => {
     updateToJSON()
-    visited++;
-    res.cookie('stuff', myString, {maxAge: 999999999999999999999999999999});
-    res.cookie('visited', visited, {maxAge: 999999999999999999999999999999});
-    
-    if (req.cookies.beenHereBefore == 'yes'){
-        res.send(`you have been here ${req.cookies.visited} Times before.`);
-    }
-    else{
-        res.cookie('beenHereBefore', 'yes', {maxAge: 999999999999999999999999999999});
-        visited = 0;
-        res.send("This is your First Time Here");
-    }
     res.render('start');
 };
 
