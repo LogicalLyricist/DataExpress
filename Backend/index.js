@@ -12,6 +12,7 @@ app.use(cookieParser('whatever'));
 
 app.use(express.static(path.join(__dirname,'/public')));
 
+let visited = 0;
 
 const { MongoClient, ObjectId } = require('mongodb');
 const { hasUncaughtExceptionCaptureCallback } = require('process');
@@ -72,6 +73,18 @@ logout = (req,res) => {
     res.redirect("/")
 }
 start = (req, res) => {
+    visited++;
+    res.cookie('stuff', myString, {maxAge: 999999999999999999999999999999});
+    res.cookie('visited', visited, {maxAge: 999999999999999999999999999999});
+    
+    if (req.cookies.beenHereBefore == 'yes'){
+        res.send(`you have been here ${req.cookies.visited} Times before.`);
+    }
+    else{
+        res.cookie('beenHereBefore', 'yes', {maxAge: 999999999999999999999999999999});
+        visited = 0;
+        res.send("This is your First Time Here");
+    }
     res.render('start');
 };
 
