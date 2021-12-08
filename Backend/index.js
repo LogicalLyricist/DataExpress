@@ -17,7 +17,6 @@ let visited = 0;
 
 const { MongoClient, ObjectId } = require('mongodb');
 const { hasUncaughtExceptionCaptureCallback } = require('process');
-const fs = require('fs');
 const url = 'mongodb+srv://Group:MTM282@dataexpressdb.108zd.mongodb.net/DataExpress?retryWrites=true&w=majority';
 const client = new MongoClient(url);
 
