@@ -109,52 +109,85 @@ renderCreate = (req, res) => {
 updateToJSON = async (req, res) => {
     await client.connect();
     const findResult = await collection.find({}).toArray();
-    var finalOutput
+    
+    var cheeseCount = 0;
+    var pepperoniCount = 0;
+    var pineappleCount = 0;
+    var otherCount = 0;
+    var flyingCount = 0;
+    var teleportCount = 0;
+    var invisCount = 0;
+    var strengthCount = 0;
+    var actionCount = 0;
+    var comedyCount = 0;
+    var dramaCount = 0;
+    var horrorCount = 0;
 
     for(var i = 0; i < findResult.length; i++ ) {
         q1 = findResult[i].q1
+        console.log(q1)
         q2 = findResult[i].q2
         q3 = findResult[i].q3
-        console.log(` ${q1}, ${q2}, ${q3} `)
         
-        finalOutput += ` ${q1}, ${q2}, ${q3} `
-        console.log(finalOutput)
         if (q1 === "Cheese"){
-            
-
+            cheeseCount++
+        }else if(q1 === "Pepperoni"){
+            pepperoniCount++
+        }else if(q1 === "Pineapple"){
+        pineappleCount++
+        }else{
+            otherCount++
         }
 
+        if (q2 === "Flying"){
+            flyingCount++
+        }else if(q2 === "Teleportation"){
+            teleportCount
+        }else if(q2 === "Invisibility"){
+        invisCount++
+        }else{
+            strengthCount++
+        }
+
+        if (q3 === "Action"){
+            actionCount++
+        }else if(q3 === "Comedy"){
+            comedyCount++
+        }else if(q3 === "Drama"){
+            dramaCount++
+        }else{
+            horrorCount++
+        }
     }
-    finalOutput = JSON.stringify(finalOutput)
+
+    
+
 
     const theJSON = [
-        
         {
             Question: "What is your favorite pizza topping",
-        "Cheese": 0,
-        "Pepperoni": 0,
-        "Pineapple": 0,
-        "Other": 0,
+            Cheese: cheeseCount,
+            Pepperoni: pepperoniCount,
+            Pineapple: pineappleCount,
+            Other: otherCount,
         },
-
         {
             Question: 'What is your dream superpower',
-        " Flying": 0,
-        "Teleportation": 0,
-        "Invisibility": 0,
-        "Super strength": 0,
+            Flying: flyingCount,
+            Teleportation: teleportCount,
+            Invisibility: invisCount,
+            "Super strength": strengthCount,
         },
-
         {
             Question: 'What is your favorite movie genre',
-        "Action": 0,
-        "Comedy": 0,
-        "Drama": 0,
-        "Horror": 0,
+            Action: actionCount,
+            Comedy: comedyCount,
+            Drama: dramaCount,
+            Horror: horrorCount,
         }
     ];
 
-    fs.writeFile("results.json", finalOutput, (err, result) => {
+    fs.writeFile("results.json", JSON.stringify(theJSON), (err, result) => {
         if(err) console.log('error: ', err);
     });
     client.close()
