@@ -70,7 +70,6 @@ renderHome = async (req, res) => {
     
         res.cookie('beenHereBefore', 'yes', {maxAge: 999999999999999999999999999999});
         visited = 0;
-        res.send("This is your First Time Here");
     }
 
     res.render('home',{
