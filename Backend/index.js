@@ -6,6 +6,8 @@ const bcrypt = require('bcryptjs');
 const path = require('path')
 const app = express();
 const fs = require('fs');
+const XMLHttpRequest = require('xhr2');
+const xhr = new XMLHttpRequest();
 
 app.set('view engine', 'pug');
 app.set('views', __dirname + '/views');
@@ -17,6 +19,11 @@ app.use((req,res, next) => {
 });
 
 app.use(express.static(path.join(__dirname,'/public')));
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
 
 let visited = 0;
 
@@ -28,6 +35,7 @@ const client = new MongoClient(url);
 const dbName = 'DataExpress';
 const db = client.db(dbName);
 const collection = db.collection('Users');
+
 
 renderLogin = (req, res) => {
     res.render('login');
@@ -142,7 +150,7 @@ updateToJSON = async (req, res) => {
         if (q2 === "Flying"){
             flyingCount++
         }else if(q2 === "Teleportation"){
-            teleportCount
+            teleportCount++
         }else if(q2 === "Invisibility"){
         invisCount++
         }else{
@@ -161,11 +169,32 @@ updateToJSON = async (req, res) => {
     }
 
     
-
-
-    const theJSON = [
+    var theJSON = [
         {
-            Question: "What is your favorite pizza topping",
+            name: 'Bob',
+            age: 21,
+            species: 'Zombie'
+        },
+        {
+            name: 'Suzette',
+            age: 34,
+            species: 'Vampire'
+        },
+        {
+            name: 'Harry',
+            age: 42,
+            species: 'Werewolf'
+        },
+        {
+            name: 'Sally',
+            age: 28,
+            species: 'Human'
+        }
+    ];
+
+    theJSON = [
+        {
+            Question: 'What is your favorite pizza topping',
             Cheese: cheeseCount,
             Pepperoni: pepperoniCount,
             Pineapple: pineappleCount,
@@ -176,7 +205,7 @@ updateToJSON = async (req, res) => {
             Flying: flyingCount,
             Teleportation: teleportCount,
             Invisibility: invisCount,
-            "Super strength": strengthCount,
+            Strength: strengthCount,
         },
         {
             Question: 'What is your favorite movie genre',
@@ -192,6 +221,9 @@ updateToJSON = async (req, res) => {
     });
     client.close()
 }
+api = (req, res) => {
+    res.json(JSON.parse(fs.readFileSync('results.json'), 'utf8'));
+};
 
 addUser = async (req, res) => {
     await client.connect();
@@ -256,7 +288,6 @@ deleteUser = async (req, res) =>{
     const deleteResult = await collection.deleteOne({_id: ObjectId(req.params.id)});
     client.close
     res.redirect('/admin')
-
 };
 const urlencodedParser = express.urlencoded({
     extended: false
@@ -269,7 +300,7 @@ app.use(expressSession({
     resave: true
 }));
 
-app.get('/', start); //Ask about later
+app.get('/', start);
 app.post("/", logout)
 app.get('/start', start);
 
@@ -278,9 +309,7 @@ app.post('/loggedIn', urlencodedParser, authUser);
 
 app.get('/create', renderCreate);
 app.post('/create', urlencodedParser, addUser);
-//app.get('/createAcc', urlencodedParser, addUser);
 
-//v one of these needs to go v
 app.get('/home', renderHome);
 app.post('/home',urlencodedParser, authUser);
 
@@ -290,5 +319,6 @@ app.get('/admin', renderAdmin);
 app.get('/delete/:id', deleteUser);
 
 app.get('/fail', passFailed);
+app.get('/api', api);
 
 app.listen(3000);
