@@ -105,6 +105,7 @@ renderCreate = (req, res) => {
     res.render('createAccount');
 };
 
+
 updateToJSON = async (req, res) => {
     await client.connect();
     const findResult = await collection.find({}).toArray();
@@ -114,12 +115,44 @@ updateToJSON = async (req, res) => {
         q1 = findResult[i].q1
         q2 = findResult[i].q2
         q3 = findResult[i].q3
-        console.log(q1 + q2 + q3)
+        console.log(` ${q1}, ${q2}, ${q3} `)
         
-        finalOutput += (q1 + q2 +q3)
+        finalOutput += ` ${q1}, ${q2}, ${q3} `
         console.log(finalOutput)
+        if (q1 === "Cheese"){
+            
+
+        }
+
     }
     finalOutput = JSON.stringify(finalOutput)
+
+    const theJSON = [
+        
+        {
+            Question: "What is your favorite pizza topping",
+        "Cheese": 0,
+        "Pepperoni": 0,
+        "Pineapple": 0,
+        "Other": 0,
+        },
+
+        {
+            Question: 'What is your dream superpower',
+        " Flying": 0,
+        "Teleportation": 0,
+        "Invisibility": 0,
+        "Super strength": 0,
+        },
+
+        {
+            Question: 'What is your favorite movie genre',
+        "Action": 0,
+        "Comedy": 0,
+        "Drama": 0,
+        "Horror": 0,
+        }
+    ];
 
     fs.writeFile("results.json", finalOutput, (err, result) => {
         if(err) console.log('error: ', err);
